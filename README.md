@@ -148,29 +148,27 @@ sudo wireshark -i gns3tap0 -k
 
 An example incident report is included to demonstrate documenting detection, impact, root cause, resolution and preventive measures. See `Project 5 NOC Simulation.md` for a full incident timeline and remediation steps.
 
-## Repository Structure
+## GitHub repository structure (actual)
 
-```
-Project5-NOC-Simulation/
-├── README.md
-├── Project 5 NOC Simulation.md
-├── GNS3 data/
-├── Screenshort/ (screenshots)
-├── configs/
-│   ├── Router1.txt
-│   ├── Router2.txt
-│   └── Switch1.txt
-├── scripts/
-│   ├── syslog_setup.sh
-│   ├── snmp_setup.sh
-│   └── ntp_setup.sh
-├── docs/
-│   └── incident-response-template.md
-└── logs/
-    └── (generated syslog files)
-```
+Repository root contents (as of this commit):
 
-> Note: Filenames and subfolders may vary — this README summarizes the content and points to the main guidance file `Project 5 NOC Simulation.md` which contains detailed configs, commands and screenshots.
+- README.md
+- Project 5 NOC Simulation.md
+- GNS3 data/
+  - Project 5: NOC Simulation.gns3
+- Screenshort/
+  - 01_topology.png
+  - 02_ntp_status-Router1.png
+  - 02_ntp_status-Router2.png
+  - 03_ntp_associations-Router1.png
+  - 03_ntp_associations-Router2.png
+  - 04_syslog_logs.png
+  - 05_snmp_walk-Router1.png
+  - 05_snmp_walk-Router2.png
+  - 06_tshark_capture.png
+  - 07_wireshark_capture.png
+
+Note: folders such as `configs/`, `scripts/` and `docs/` mentioned earlier are not present in the repository. If you want them added, I can create those directories and example files.
 
 ## Verification Checklist
 
@@ -189,9 +187,9 @@ Project5-NOC-Simulation/
 
 ## How to use this repo
 
-1. Import the provided GNS3 project or recreate the topology in GNS3 using the topology diagram in `Project 5 NOC Simulation.md`.
+1. Import the provided GNS3 project from `GNS3 data/Project 5: NOC Simulation.gns3` or recreate the topology in GNS3 using the topology diagram in `Project 5 NOC Simulation.md`.
 2. Provision the Kali host and bind a TAP interface (`gns3tap0`) to the Cloud node.
-3. Apply router configs from `configs/` or via the CLI snippets in `Project 5 NOC Simulation.md`.
+3. Apply router configs using the CLI snippets in `Project 5 NOC Simulation.md`.
 4. Start monitoring: rsyslog, snmpwalk and Wireshark/TShark.
 
 ## License & Credits
@@ -200,4 +198,4 @@ This repository is provided for learning and lab purposes. Use at your own risk.
 
 ---
 
-(README updated using `Project 5 NOC Simulation.md` as reference.)
+(README updated to reflect actual repository structure.)
