@@ -95,4 +95,3 @@ Packet capture screenshots:
 
 ---
 
-(README updated to match the structure and screenshots used in `Project 5 NOC Simulation.md`.)
