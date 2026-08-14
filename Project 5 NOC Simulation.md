@@ -4,13 +4,13 @@
 
 ## 📌 Project Overview
 
-This project simulates a **Network Operations Center (NOC)** environment with centralized logging, monitoring, and packet analysis. It demonstrates how real-world NOC engineers monitor network health, collect telemetry, and investigate incidents using GNS3 lab devices and a monitoring host.
+This project simulates a **Network Operations Center (NOC)** environment with centralized logging, monitoring, and packet analysis. It demonstrates how real-world NOC engineers monitor network health and investigate incidents using NTP, Syslog, SNMP and packet captures.
 
 ---
 
 ## 🏗️ Lab Topology (GNS3)
 
-Below is the topology image used for this lab.
+Below is the topology image used for this lab. (Replaced the previous text/ASCII topology with the actual image from the repository.)
 
 ![NOC Topology — GNS3 project](Screenshort/01_topology.png)
 
@@ -229,7 +229,7 @@ REPORTED BY: NOC Engineer
 
 ----------------------------------------
 DESCRIPTION:
-Unplanned interface state flap detected on core gateway Router R1 (GigabitEthernet0/0). The interface transitioned to DOWN state unexpectedly, triggering OSPF neighbor adjacency drop and temporary service disruption.
+Unplanned interface state flap detected on core gateway Router R1 (GigabitEthernet0/0). The interface transitioned to DOWN state unexpectedly, triggering OSPF neighbor adjacency drop and temporary service interruptions.
 ----------------------------------------
 IMPACT:
 - Primary Core Gateway R1 (172.16.10.1) interface Gi0/0 became unreachable.
@@ -281,7 +281,7 @@ Repository root (current):
   - 07_wireshark_capture.png
 
 Notes:
-- Directories/files referenced elsewhere in older drafts (for example `configs/`, `scripts/`, `docs/`, `logs/`) are not present in the repository right now. If you want those added, tell me and I will create example placeholders.
+- Directories/files referenced elsewhere in older drafts (for example `configs/`, `scripts/`, `docs/`, `logs/`) are not present in the repository right now. If you want those added, tell me and I will add them.
 - The GNS3 project file is in `GNS3 data/Project 5: NOC Simulation.gns3`. Use that to import the topology into GNS3.
 
 ---
