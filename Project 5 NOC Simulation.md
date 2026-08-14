@@ -4,7 +4,15 @@
 
 ## 📌 Project Overview
 
-This project simulates a **Network Operations Center (NOC)** environment with centralized logging, monitoring, and packet analysis. It demonstrates how real-world NOC engineers monitor network health, troubleshoot issues, and maintain documentation.
+This project simulates a **Network Operations Center (NOC)** environment with centralized logging, monitoring, and packet analysis. It demonstrates how real-world NOC engineers monitor network health, collect telemetry, and investigate incidents using GNS3 lab devices and a monitoring host.
+
+---
+
+## 🏗️ Lab Topology (GNS3)
+
+Below is the topology image used for this lab.
+
+![NOC Topology — GNS3 project](Screenshort/01_topology.png)
 
 ---
 
@@ -20,46 +28,11 @@ This project simulates a **Network Operations Center (NOC)** environment with ce
 
 ---
 
-## 🏗️ Lab Topology (GNS3)
-
-```text
- ┌─────────────────────────────────────────────────────────────────────────────┐
- │                         NOC SIMULATION LAB TOPOLOGY                         │
- │                                                                             │
- │ 🟦 [ NOC MANAGEMENT ZONE - 172.16.10.0/24 ]                                 │
- │                                                                             │
- │                   ┌─────────────────────────────────────────┐               │
- │                   │     Kali Linux / NOC Server             │               │
- │                   │     - Syslog Server (rsyslog)           │               │
- │                   │     - SNMP Monitoring (snmpwalk)        │               │
- │                   │     - Wireshark (Packet Capture)        │               │
- │                   │     IP: 172.16.10.100/24                │               │
- │                   └────────────────────┬────────────────────┘               │
- │                                        │ (TAP Interface: gns3tap0)          │
- │                                        ▼                                    │
- │                               ┌─────────────────┐                           │
- │                               │    MGMT_SW1     │                           │
- │                               └────────┬────────┘                           │
- │                                        │                                    │
- │ 🟧 [ OSPF AREA 0 CORE FABRIC ]         │                                    │
- │                       ┌────────────────┴────────────────┐                   │
- │                       │                                 │                   │
- │                       ▼                                 ▼                   │
- │              ┌─────────────────┐               ┌─────────────────┐          │
- │              │ Router R1 (NTP Master)           │ Router R2 (NTP Client)    │
- │              │ IP: 172.16.10.1 │───────────────│ IP: 172.16.10.2 │          │
- │              └─────────────────┘  OSPF Area 0  └─────────────────┘          │
- └─────────────────────────────────────────────────────────────────────────────┘
-
-```
-
----
-
 ## 🌐 IP Addressing Scheme
 
 | Device | Interface | IP Address | Subnet Mask | Role |
 | --- | --- | --- | --- | --- |
-| NOC Server | `gns3tap0` | 172.16.10.100 | 255.255.255.0 | Monitoring Host (Rsyslog, SNMP, Wireshark) |
+| NOC Server | `gns3tap0` | 172.16.10.100 | 255.255.255.0 | Monitoring Host (rsyslog, SNMP, Wireshark) |
 | Router1 (R1) | Gi0/0 | 172.16.10.1 | 255.255.255.0 | Primary Gateway / NTP Master / SNMP Agent |
 | Router2 (R2) | Gi0/0 | 172.16.10.2 | 255.255.255.0 | Secondary Gateway / NTP Client / SNMP Agent |
 
@@ -88,7 +61,6 @@ ntp master 2
 clock set 12:00:00 14 Aug 2026
 end
 write memory
-
 ```
 
 #### Configuration (Router 2 - NTP Client)
@@ -105,7 +77,6 @@ exit
 ntp server 172.16.10.1
 end
 write memory
-
 ```
 
 #### Verification Commands
@@ -118,8 +89,17 @@ R1# show ntp associations
 ! On Router 2
 R2# show ntp status
 R2# show ntp associations
-
 ```
+
+NTP verification screenshots:
+
+![NTP status — Router1](Screenshort/02_ntp_status-Router1.png)
+
+![NTP status — Router2](Screenshort/02_ntp_status-Router2.png)
+
+![NTP associations — Router1](Screenshort/03_ntp_associations-Router1.png)
+
+![NTP associations — Router2](Screenshort/03_ntp_associations-Router2.png)
 
 ---
 
@@ -137,7 +117,6 @@ logging facility local7
 logging source-interface GigabitEthernet0/0
 end
 write memory
-
 ```
 
 #### NOC Server Configuration (Kali Linux)
@@ -146,7 +125,6 @@ write memory
 
 ```bash
 sudo nano /etc/rsyslog.conf
-
 ```
 
 2. Enable UDP module (uncomment these lines):
@@ -154,22 +132,23 @@ sudo nano /etc/rsyslog.conf
 ```text
 module(load="imudp")
 input(type="imudp" port="514")
-
 ```
 
 3. Restart rsyslog service:
 
 ```bash
 sudo systemctl restart rsyslog
-
 ```
 
 #### Verification Command (On NOC Server)
 
 ```bash
 sudo tail -f /var/log/syslog
-
 ```
+
+Syslog capture screenshot:
+
+![Syslog logs](Screenshort/04_syslog_logs.png)
 
 ---
 
@@ -187,7 +166,6 @@ snmp-server contact Admin_NOC@company.com
 snmp-server enable traps
 end
 write memory
-
 ```
 
 #### Verification Commands (On NOC Server)
@@ -198,8 +176,13 @@ snmpwalk -v2c -c public 172.16.10.1 system
 
 ! Poll System Info (R2)
 snmpwalk -v2c -c public 172.16.10.2 system
-
 ```
+
+SNMP verification screenshots:
+
+![SNMP walk — Router1](Screenshort/05_snmp_walk-Router1.png)
+
+![SNMP walk — Router2](Screenshort/05_snmp_walk-Router2.png)
 
 ---
 
@@ -216,18 +199,24 @@ snmpwalk -v2c -c public 172.16.10.2 system
 
 ```bash
 sudo tshark -i gns3tap0 -f "udp port 161 or udp port 123 or udp port 514"
-
 ```
 
 #### Wireshark GUI Command
 
 ```bash
 sudo wireshark -i gns3tap0 -k
-
 ```
+
+Packet capture screenshots:
+
+![TShark capture](Screenshort/06_tshark_capture.png)
+
+![Wireshark capture](Screenshort/07_wireshark_capture.png)
+
 ---
 
-### 5. Post-Incident Status
+### 5. Post-Incident Status (Example)
+
 ```text
 ========================================
 NETWORK INCIDENT REPORT
@@ -240,7 +229,7 @@ REPORTED BY: NOC Engineer
 
 ----------------------------------------
 DESCRIPTION:
-Unplanned interface state flap detected on core gateway Router R1 (GigabitEthernet0/0). The interface transitioned to DOWN state unexpectedly, triggering OSPF neighbor adjacency drop and temporary telemetry communication interruption with the central NOC monitoring server.
+Unplanned interface state flap detected on core gateway Router R1 (GigabitEthernet0/0). The interface transitioned to DOWN state unexpectedly, triggering OSPF neighbor adjacency drop and temporary service disruption.
 ----------------------------------------
 IMPACT:
 - Primary Core Gateway R1 (172.16.10.1) interface Gi0/0 became unreachable.
@@ -267,38 +256,33 @@ PREVENTIVE MEASURES:
 2. Configure SNMP Traps for immediate interface status change notifications to reduce detection time.
 3. Implement secondary redundant management path for out-of-band monitoring.
 ----------------------------------------
-
 ```
+
 ---
 
-## 📂 GitHub Repository Structure
+## 📂 Repository structure (actual)
 
-```text
-Project5-NOC-Simulation/
-├── README.md
-├── configs/
-│   ├── Router1.txt
-│   ├── Router2.txt
-│   └── Switch1.txt
-├── screenshots/
-│   ├── topology.png
-│   ├── ntp-status.png
-│   ├── ntp-associations.png
-│   ├── syslog-logs.png
-│   ├── snmp-walk.png
-│   ├── snmp-interfaces.png
-│   ├── wireshark-capture.png
-│   └── incident-response.png
-├── scripts/
-│   ├── syslog_setup.sh
-│   ├── snmp_setup.sh
-│   └── ntp_setup.sh
-├── docs/
-│   └── incident-response-template.md
-└── logs/
-    └── (generated syslog files)
+Repository root (current):
 
-```
+- README.md
+- Project 5 NOC Simulation.md
+- GNS3 data/
+  - Project 5: NOC Simulation.gns3
+- Screenshort/
+  - 01_topology.png
+  - 02_ntp_status-Router1.png
+  - 02_ntp_status-Router2.png
+  - 03_ntp_associations-Router1.png
+  - 03_ntp_associations-Router2.png
+  - 04_syslog_logs.png
+  - 05_snmp_walk-Router1.png
+  - 05_snmp_walk-Router2.png
+  - 06_tshark_capture.png
+  - 07_wireshark_capture.png
+
+Notes:
+- Directories/files referenced elsewhere in older drafts (for example `configs/`, `scripts/`, `docs/`, `logs/`) are not present in the repository right now. If you want those added, tell me and I will create example placeholders.
+- The GNS3 project file is in `GNS3 data/Project 5: NOC Simulation.gns3`. Use that to import the topology into GNS3.
 
 ---
 
@@ -315,3 +299,30 @@ Project5-NOC-Simulation/
 
 ---
 
+## 🔧 Useful files (where to find configs & scripts)
+
+- `GNS3 data/Project 5: NOC Simulation.gns3` — import this into GNS3 to recreate the topology.
+- Screenshots are in `Screenshort/`.
+
+---
+
+## 🔧 Prerequisites
+
+- GNS3 (recommended recent release)
+- Kali Linux (or other Linux host) for rsyslog, snmp tools and Wireshark
+- Cisco IOS images or compatible router images for GNS3
+
+## 🔧 How to use this repo
+
+1. Import the provided GNS3 project or recreate the topology in GNS3 using the topology diagram in this document.
+2. Provision the Kali host and bind a TAP interface (`gns3tap0`) to the Cloud node.
+3. Apply router configs from the configuration snippets above.
+4. Start monitoring: rsyslog, snmpwalk and Wireshark/TShark.
+
+## 🔧 License & Credits
+
+This repository is provided for learning and lab purposes. Use at your own risk. Credits to the author/maintainer.
+
+---
+
+(Project file updated to include inline screenshots.)
