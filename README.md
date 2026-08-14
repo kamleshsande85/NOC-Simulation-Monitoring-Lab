@@ -1,36 +1,80 @@
 # NOC Simulation & Monitoring Lab
 
-This repository contains a lab for simulating a Network Operations Center (NOC) environment using GNS3 and a small device topology. The lab demonstrates centralized logging (rsyslog), SNMP monitoring, NTP time synchronization, and packet analysis with Wireshark/TShark.
+---
 
-## Project Overview
+## 📌 Project Overview
 
-The NOC Simulation & Monitoring Lab recreates a simple management network and core fabric to teach and test common NOC tasks: collecting logs, polling device telemetry, keeping devices time-synchronized, and capturing/analyzing network traffic. It is suitable for training, demos, and validation of monitoring configurations in a controlled environment.
+This repository contains a lab for simulating a Network Operations Center (NOC) environment using GNS3 and a small device topology. The lab demonstrates centralized logging (rsyslog), SNMP monitoring, time synchronization (NTP), and packet capture/analysis with Wireshark/TShark. Full step‑by‑step configurations, verification commands and capture screenshots are in `Project 5 NOC Simulation.md`.
 
-## Lab Topology (GNS3)
+---
 
-Below is the topology image used for this lab. For full step-by-step configuration, commands and captures, see `Project 5 NOC Simulation.md`.
+## 🏗️ Lab Topology (GNS3)
 
-![NOC Topology](Screenshort/01_topology.png)
+Below is the topology image used for this lab (replaced the older ASCII/text topology with the actual image from the repository):
 
-## Objectives
+![NOC Topology — GNS3 project](Screenshort/01_topology.png)
 
-- NTP: Keep device clocks synchronized across the topology.
-- Syslog: Aggregate router logs centrally on a Kali Linux NOC server running rsyslog.
-- SNMP: Poll device health and configuration using SNMPv2c.
-- Packet Analysis: Capture and inspect NTP, SNMP, and Syslog traffic with Wireshark/TShark.
-- Incident Response: Document and practice handling network incidents.
+---
 
-## IP Addressing Scheme (summary)
+## 🎯 Objectives
 
-| Device       | Interface  | IP Address      | Subnet Mask      | Role                                      |
-|--------------|------------|-----------------|------------------|-------------------------------------------|
-| NOC Server   | gns3tap0   | 172.16.10.100   | 255.255.255.0    | Monitoring host (rsyslog, snmpwalk, wireshark) |
-| Router R1    | Gi0/0      | 172.16.10.1     | 255.255.255.0    | Primary gateway / NTP master / SNMP agent |
-| Router R2    | Gi0/0      | 172.16.10.2     | 255.255.255.0    | Secondary gateway / NTP client / SNMP agent |
+| Module | Technology | Purpose |
+| --- | --- | --- |
+| **NTP** | Network Time Protocol | Time sync across all devices |
+| **Syslog** | Centralized Logging | Collect logs from all devices |
+| **SNMP** | Simple Network Management Protocol | Monitor device health |
+| **Wireshark** | Packet Analysis | Capture and analyze traffic |
+| **Incident Response** | Documentation | Troubleshooting procedures |
 
-(See `Project 5 NOC Simulation.md` for full configs, verification steps and all capture images.)
+---
 
-## GitHub repository structure (actual)
+## 🌐 IP Addressing Scheme (summary)
+
+| Device | Interface | IP Address | Subnet Mask | Role |
+| --- | --- | --- | --- | --- |
+| NOC Server | `gns3tap0` | 172.16.10.100 | 255.255.255.0 | Monitoring Host (rsyslog, SNMP, Wireshark) |
+| Router1 (R1) | Gi0/0 | 172.16.10.1 | 255.255.255.0 | Primary Gateway / NTP Master / SNMP Agent |
+| Router2 (R2) | Gi0/0 | 172.16.10.2 | 255.255.255.0 | Secondary Gateway / NTP Client / SNMP Agent |
+
+---
+
+## ⚙️ Quick start (high level)
+
+1. Import `GNS3 data/Project 5: NOC Simulation.gns3` into GNS3 or recreate the topology.
+2. Provision a Kali Linux host (NOC server) and bind a TAP interface (`gns3tap0`) to the Cloud node.
+3. Apply router configuration snippets from `Project 5 NOC Simulation.md` (NTP, Syslog, SNMP).
+4. Start monitoring: rsyslog, snmpwalk and Wireshark/TShark.
+
+---
+
+## 🔎 Verification (examples)
+
+- NTP: `show ntp status` on R1 and `show ntp associations` on R2
+- Syslog: `sudo systemctl status rsyslog` and `sudo tail -f /var/log/syslog` on the NOC host
+- SNMP: `snmpwalk -v2c -c public 172.16.10.1 system`
+- Packet capture: `sudo tshark -i gns3tap0 -f "udp port 161 or udp port 123 or udp port 514"`
+
+NTP and verification screenshots (examples):
+
+![NTP status — Router1](Screenshort/02_ntp_status-Router1.png)
+
+![NTP associations — Router1](Screenshort/03_ntp_associations-Router1.png)
+
+Syslog and SNMP screenshots:
+
+![Syslog logs](Screenshort/04_syslog_logs.png)
+
+![SNMP walk — Router1](Screenshort/05_snmp_walk-Router1.png)
+
+Packet capture screenshots:
+
+![TShark capture](Screenshort/06_tshark_capture.png)
+
+![Wireshark capture](Screenshort/07_wireshark_capture.png)
+
+---
+
+## 📂 Repository contents (actual)
 
 - README.md
 - Project 5 NOC Simulation.md
@@ -48,8 +92,8 @@ Below is the topology image used for this lab. For full step-by-step configurati
   - 06_tshark_capture.png
   - 07_wireshark_capture.png
 
-If you want the repo to include runnable configs and scripts, I can add `configs/` and `scripts/` directories with example files.
+If you want the README to include the full text from `Project 5 NOC Simulation.md` instead of a summary, or want renamed/organized screenshot folders (for example `screenshots/`), tell me and I will update and fix all links accordingly.
 
 ---
 
-(README updated to include the topology image and point readers to the full Project 5 document.)
+(README updated to match the structure and screenshots used in `Project 5 NOC Simulation.md`.)
