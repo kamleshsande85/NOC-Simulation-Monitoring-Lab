@@ -92,7 +92,6 @@ Packet capture screenshots:
   - 06_tshark_capture.png
   - 07_wireshark_capture.png
 
-If you want the README to include the full text from `Project 5 NOC Simulation.md` instead of a summary, or want renamed/organized screenshot folders (for example `screenshots/`), tell me and I will update and fix all links accordingly.
 
 ---
 
